@@ -4,8 +4,8 @@ export async function verifySignature(message, signatureBase64) {
   console.log('🔏 Firma base64:', signatureBase64);
 
   try {
-const response = await fetch('http://localhost:5000/api/auth/public-key');
-    const pem = await response.text();
+const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/public-key`);
+
     console.log('📜 Clave pública PEM recibida:\n', pem);
 
     const binaryDer = convertPemToBinary(pem);
