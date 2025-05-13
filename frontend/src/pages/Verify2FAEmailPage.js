@@ -1,25 +1,23 @@
-// src/pages/Verify2FAEmailPage.js
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import '../styles/globalForm.css'; // ajusta si la ruta es diferente
+import '../styles/globalForm.css';
 import { verifySignature } from '../utils/verifySignature';
-
 
 const Verify2FAEmailPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const email = state?.email;
 
-  const { login } = useAuth(); // ✅ usar login del contexto
+  const { login } = useAuth();
 
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
-  const [cooldown, setCooldown] = useState(0); // Inicia en 0 para permitir primer envío
+  const [cooldown, setCooldown] = useState(0);
   const [isSending, setIsSending] = useState(false);
 
-  // Temporizador del botón
+  // Temporizador
   useEffect(() => {
     let interval;
     if (cooldown > 0) {
@@ -30,40 +28,44 @@ const Verify2FAEmailPage = () => {
     return () => clearInterval(interval);
   }, [cooldown]);
 
-  // Verificación del código
+  // Verificación del código 2FA por correo
   const handleVerify = async (e) => {
     e.preventDefault();
     setError('');
     try {
-const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/verify-2fa`, { email, token });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/verify-2fa`, {
+        email,
+        token
+      });
 
-const valid = await verifySignature(signedMessage, signature);
+      const { signedMessage, signature, token: jwt } = res.data;
 
-if (!valid) {
-  alert('❌ Firma digital inválida. Posible manipulación de datos.');
-  return;
-}
+      const valid = await verifySignature(signedMessage, signature);
 
-localStorage.setItem('token', res.data.token);
-localStorage.setItem('signedMessage', signedMessage);
-localStorage.setItem('signature', signature);
-navigate('/dashboard');
+      if (!valid) {
+        alert('❌ Firma digital inválida. Posible manipulación de datos.');
+        return;
+      }
 
-      login(res.data.token); // ✅ actualiza el contexto global con el token
+      localStorage.setItem('token', jwt);
+      localStorage.setItem('signedMessage', signedMessage);
+      localStorage.setItem('signature', signature);
+
+      login(jwt);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Código inválido');
     }
   };
 
-  // Reenvío del código por correo
+  // Reenvío del código
   const handleResendCode = async () => {
     if (cooldown > 0 || isSending) return;
 
     try {
       setIsSending(true);
-await axios.post(`${process.env.REACT_APP_API_URL}/auth/resend-code`, { email });
-
+      await axios.post(`${process.env.REACT_APP_API_URL}/auth/resend-code`, { email });
+      setCooldown(30);
     } catch (err) {
       console.error('Error reenviando código', err);
       setError('No se pudo reenviar el código. Intenta más tarde.');
@@ -91,13 +93,12 @@ await axios.post(`${process.env.REACT_APP_API_URL}/auth/resend-code`, { email })
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button
-  onClick={handleResendCode}
-  disabled={cooldown > 0 || isSending}
-  style={{ marginTop: '12px' }}
->
-  {cooldown > 0 ? `Reenviar en ${cooldown}s` : isSending ? 'Enviando...' : 'Reenviar código'}
-</button>
-
+        onClick={handleResendCode}
+        disabled={cooldown > 0 || isSending}
+        style={{ marginTop: '12px' }}
+      >
+        {cooldown > 0 ? `Reenviar en ${cooldown}s` : isSending ? 'Enviando...' : 'Reenviar código'}
+      </button>
     </div>
   );
 };
