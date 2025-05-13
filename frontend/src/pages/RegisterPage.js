@@ -95,7 +95,7 @@ const RegisterPage = () => {
     if (cooldown > 0 || isSending) return;
     try {
       setIsSending(true);
-      await axios.post('http://localhost:5000/api/auth/send-verification-code', { email });
+await axios.post(`${process.env.REACT_APP_API_URL}/auth/send-verification-code`, { email });
       setMessage('Código reenviado');
       setCooldown(30);
     } catch (err) {

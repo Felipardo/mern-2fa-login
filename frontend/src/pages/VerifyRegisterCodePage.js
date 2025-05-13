@@ -15,7 +15,7 @@ const VerifyRegisterCodePage = () => {
     const enable2FA = localStorage.getItem('pending-2fa') === '1';
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register-verify', {
+const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register-verify`, {
         email,
         code,
         password,
