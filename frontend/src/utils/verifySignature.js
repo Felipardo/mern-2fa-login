@@ -4,7 +4,8 @@ export async function verifySignature(message, signatureBase64) {
   console.log('🔏 Firma base64:', signatureBase64);
 
   try {
-const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/public-key`);
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/public-key`);
+    const pem = await response.text(); // ✅ Aquí defines correctamente la variable
 
     console.log('📜 Clave pública PEM recibida:\n', pem);
 
@@ -41,7 +42,7 @@ const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/public-key`)
 
 function convertPemToBinary(pem) {
   const lines = pem.split('\n');
-  const base64Lines = lines.filter(line => 
+  const base64Lines = lines.filter(line =>
     line.trim() && !line.includes('BEGIN PUBLIC KEY') && !line.includes('END PUBLIC KEY')
   );
   const base64 = base64Lines.join('');
@@ -52,4 +53,3 @@ function convertPemToBinary(pem) {
   }
   return buffer.buffer;
 }
-
