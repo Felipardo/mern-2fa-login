@@ -49,14 +49,15 @@ const RegisterPage = () => {
   const handleSendVerificationCode = async (e) => {
     e.preventDefault();
     setMessage('');
-    try {
-      const res = await axios.post('http://localhost:5000/api/auth/send-verification-code', { email });
-      setMessage(res.data.message);
-      setStep(2);
-      setCooldown(30);
-    } catch (err) {
-      setMessage(err.response?.data?.message || 'Error enviando código');
-    }
+   try {
+  const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/send-verification-code`, { email });
+  setMessage(res.data.message);
+  setStep(2);
+  setCooldown(30);
+} catch (err) {
+  setMessage(err.response?.data?.message || 'Error enviando código');
+}
+
   };
 
   // Verificar código y registrar
@@ -64,7 +65,7 @@ const RegisterPage = () => {
     e.preventDefault();
     setMessage('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-email-code', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/verify-email-code`, {
         email,
         password,
         code: verificationCode,

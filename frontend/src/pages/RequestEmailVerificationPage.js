@@ -14,8 +14,7 @@ const RequestEmailVerificationPage = () => {
     setError('');
 
     try {
-        await axios.post('http://localhost:5000/api/auth/send-verification-code', { email });
-      setMessage('Código enviado al correo');
+    await axios.post(`${process.env.REACT_APP_API_URL}/auth/send-verification-code`, { email });
       navigate('/verify-email', { state: { email } });
     } catch (err) {
       setError(err.response?.data?.message || 'Error al enviar el código');

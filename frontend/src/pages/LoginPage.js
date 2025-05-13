@@ -15,9 +15,9 @@ const LoginPage = () => {
     e.preventDefault();
     setMessage('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-console.log('📤 Enviando login:', { email, password });
-console.log('📥 Respuesta:', res.data);
+const res = await axios.post('http://localhost:5000/api/auth/login', { email, password })
+
+      console.log('📥 Respuesta:', res.data);
       if (res.data.require2FA) {
         navigate('/select-2fa', { state: { email } });
       } else {

@@ -19,9 +19,8 @@ const Verify2FAQrPage = () => {
     setMessage('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-2fa', {
-        email,
-        token
+const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register-verify`, {
+
       });
 
       const { token: jwtToken, signedMessage, signature } = res.data;

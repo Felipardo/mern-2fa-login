@@ -35,8 +35,8 @@ const Verify2FAEmailPage = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-2fa', { email, token });
-      const { signedMessage, signature } = res.data;
+const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/verify-2fa`, { email, token });
+
 const valid = await verifySignature(signedMessage, signature);
 
 if (!valid) {
@@ -62,8 +62,8 @@ navigate('/dashboard');
 
     try {
       setIsSending(true);
-      await axios.post('http://localhost:5000/api/auth/resend-code', { email });
-      setCooldown(30); // ✅ cooldown de 30 segundos
+await axios.post(`${process.env.REACT_APP_API_URL}/auth/resend-code`, { email });
+
     } catch (err) {
       console.error('Error reenviando código', err);
       setError('No se pudo reenviar el código. Intenta más tarde.');

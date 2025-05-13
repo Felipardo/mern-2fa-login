@@ -21,10 +21,11 @@ const DashboardPage = () => {
     }
 
     const fetchData = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/auth/protected', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+     try {
+  const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/protected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 
         setMessage(res.data.message);
       } catch (err) {

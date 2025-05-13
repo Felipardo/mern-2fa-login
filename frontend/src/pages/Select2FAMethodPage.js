@@ -24,8 +24,8 @@ const Select2FAMethodPage = () => {
 
     try {
       setLoading(true);
-      await axios.post('http://localhost:5000/api/auth/send-code', { email });
-      navigate('/verify-2fa-email', { state: { email } });
+await axios.post(`${process.env.REACT_APP_API_URL}/auth/send-code`, { email });
+
     } catch (err) {
       console.error('Error al enviar código por correo:', err);
     } finally {
